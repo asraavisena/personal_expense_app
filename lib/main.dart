@@ -101,16 +101,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // ! SETUP APPBAR
+    final appBar = AppBar(
+      title: const Text('Flutter Personal Expense'),
+      actions: <Widget>[
+        IconButton(
+            onPressed: () => _startButtonAddTransaction(context),
+            icon: Icon(Icons.add))
+      ],
+    );
+
     // ! YANG INI BUTUH PEMAHAMAN WIDGET
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Flutter Personal Expense'),
-          actions: <Widget>[
-            IconButton(
-                onPressed: () => _startButtonAddTransaction(context),
-                icon: Icon(Icons.add))
-          ],
-        ),
+        appBar: appBar,
         // ! BUAT SCROLL KARNA PAS NGEADD LIST DAN KEYBOARD MUNCUL ADA ERROR
         body: SingleChildScrollView(
           child: Column(
@@ -119,8 +122,21 @@ class _MyHomePageState extends State<MyHomePage> {
             children: <Widget>[
               // Card will take width child, but if the parents had width it will take the parent,
               // Column is not the parent, usually is Container so it is no problem to put Container in Card or outside Card as Parent
-              Chart(_recentTransaction),
-              TransactionList(_userTransactions, _deleteTransaction),
+              // ! GET HEIGHT DEPENDS ON DEVICES
+
+              Container(
+                  height: (MediaQuery.of(context).size.height -
+                          appBar.preferredSize.height -
+                          MediaQuery.of(context).padding.top) *
+                      0.3,
+                  child: Chart(_recentTransaction)),
+              Container(
+                  height: (MediaQuery.of(context).size.height -
+                          appBar.preferredSize.height -
+                          MediaQuery.of(context).padding.top) *
+                      0.7,
+                  child:
+                      TransactionList(_userTransactions, _deleteTransaction)),
             ],
           ),
         ),
