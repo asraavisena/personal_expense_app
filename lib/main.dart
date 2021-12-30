@@ -75,6 +75,13 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _deleteTransaction(String id) {
+    // ! REBUILD UI
+    setState(() {
+      _userTransactions.removeWhere((element) => element.id == id);
+    });
+  }
+
   void _startButtonAddTransaction(BuildContext ctx) {
     showModalBottomSheet(
       context: ctx,
@@ -108,7 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
               // Card will take width child, but if the parents had width it will take the parent,
               // Column is not the parent, usually is Container so it is no problem to put Container in Card or outside Card as Parent
               Chart(_recentTransaction),
-              TransactionList(_userTransactions),
+              TransactionList(_userTransactions, _deleteTransaction),
             ],
           ),
         ),

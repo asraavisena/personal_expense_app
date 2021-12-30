@@ -5,12 +5,15 @@ import '../models/transaction.dart';
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
 
-  TransactionList(this.transactions);
+  final Function _deleteTransaction;
+
+  TransactionList(this.transactions, this._deleteTransaction);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: 300,
+        // !
+        height: 400,
         child: transactions.isEmpty
             ? Column(
                 children: <Widget>[
@@ -29,6 +32,7 @@ class TransactionList extends StatelessWidget {
                       ))
                 ],
               )
+            // ! LISTVIEW ALWAYS HAVE INFINITE HEIGHT
             : ListView.builder(
                 itemBuilder: (ctx, index) {
                   // return a widget
@@ -36,21 +40,27 @@ class TransactionList extends StatelessWidget {
                     elevation: 5,
                     margin: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                     child: ListTile(
-                        leading: CircleAvatar(
-                          radius: 30,
-                          child: Padding(
-                            padding: EdgeInsets.all(7),
-                            child: FittedBox(
-                                child:
-                                    Text('\$ ${transactions[index].amount}')),
-                          ),
+                      leading: CircleAvatar(
+                        radius: 30,
+                        child: Padding(
+                          padding: EdgeInsets.all(7),
+                          child: FittedBox(
+                              child: Text('\$ ${transactions[index].amount}')),
                         ),
-                        title: Text(
-                          transactions[index].title,
-                          style: Theme.of(context).textTheme.headline6,
-                        ),
-                        subtitle: Text(DateFormat.yMMMd()
-                            .format(transactions[index].date))),
+                      ),
+                      title: Text(
+                        transactions[index].title,
+                        style: Theme.of(context).textTheme.headline6,
+                      ),
+                      subtitle: Text(
+                          DateFormat.yMMMd().format(transactions[index].date)),
+                      trailing: IconButton(
+                        icon: Icon(Icons.delete),
+                        onPressed: () =>
+                            _deleteTransaction(transactions[index].id),
+                        color: Theme.of(context).errorColor,
+                      ),
+                    ),
                   );
                   // ! ANOTHER VERSION WITHOUT LISTTILE
                   // Card(
