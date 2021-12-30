@@ -18,12 +18,15 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Personal Expense',
       theme: ThemeData(
           primarySwatch: Colors.purple,
-          // ACCENT COLOR DEPECRATED USING COLOR SCHEME
+          //! ACCENT COLOR DEPECRATED USING COLOR SCHEME
           colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.purple)
               .copyWith(secondary: Colors.pink[400]),
           fontFamily: 'QuickSand',
           textTheme: ThemeData.light().textTheme.copyWith(
-              headline6: TextStyle(fontFamily: 'OpenSans', fontSize: 20))
+              headline6: TextStyle(fontFamily: 'OpenSans', fontSize: 20),
+              button: TextStyle(color: Colors.white)),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(onPrimary: Colors.white))
           // appBarTheme: AppBarTheme(
           //         )
           ),
@@ -60,11 +63,11 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  void _addTransaction(String title, double amount) {
+  void _addTransaction(String title, double amount, DateTime choosenDate) {
     final newTransaction = Transaction(
         title: title,
         amount: amount,
-        date: DateTime.now(),
+        date: choosenDate,
         id: (_userTransactions.length + 1).toString());
 
     setState(() {
