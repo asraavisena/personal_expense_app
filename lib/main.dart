@@ -16,6 +16,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Personal Expense',
+      // ! BIKINI PRIMARY THEME / STYLE
       theme: ThemeData(
           primarySwatch: Colors.purple,
           //! ACCENT COLOR DEPECRATED USING COLOR SCHEME
@@ -70,6 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
         date: choosenDate,
         id: (_userTransactions.length + 1).toString());
 
+    // ! STATEFUL BISA NGUBAH UI DAN MENGGUNAKAN SETSTATE()
     setState(() {
       _userTransactions.add(newTransaction);
     });
@@ -83,6 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _startButtonAddTransaction(BuildContext ctx) {
+    // ! SHOW MODAL BOTTOM SHEET
     showModalBottomSheet(
       context: ctx,
       builder: (bCtx) {
@@ -98,6 +101,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // ! YANG INI BUTUH PEMAHAMAN WIDGET
     return Scaffold(
         appBar: AppBar(
           title: const Text('Flutter Personal Expense'),
@@ -107,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 icon: Icon(Icons.add))
           ],
         ),
+        // ! BUAT SCROLL KARNA PAS NGEADD LIST DAN KEYBOARD MUNCUL ADA ERROR
         body: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,

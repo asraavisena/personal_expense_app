@@ -3,6 +3,7 @@ import './new_transaction.dart';
 import './transaction_list.dart';
 import '../models/transaction.dart';
 
+// ! GAK DIGUNAIN DI PINDAHIN KE MAIN.DART
 class UserTransactions extends StatefulWidget {
   const UserTransactions({Key? key}) : super(key: key);
 

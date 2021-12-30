@@ -32,7 +32,7 @@ class TransactionList extends StatelessWidget {
                       ))
                 ],
               )
-            // ! LISTVIEW ALWAYS HAVE INFINITE HEIGHT
+            // ! LISTVIEW BUAT SCROLL TP VIEW ALWAYS HAVE INFINITE HEIGHT
             : ListView.builder(
                 itemBuilder: (ctx, index) {
                   // return a widget
