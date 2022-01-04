@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart'; // ! FOR SYSTEM CHROME
 import './widgets/chart.dart';
@@ -117,14 +119,27 @@ class _MyHomePageState extends State<MyHomePage> {
     final mediaQuery = MediaQuery.of(context);
     final _isLandscape = mediaQuery.orientation == Orientation.landscape;
     // ! SETUP APPBAR
-    final appBar = AppBar(
-      title: const Text('Flutter Personal Expense'),
-      actions: <Widget>[
-        IconButton(
-            onPressed: () => _startButtonAddTransaction(context),
-            icon: Icon(Icons.add))
-      ],
-    );
+    // ! ADD TYPE PREFFEREDSIZEWIDGET TO ADD PREFFERED SIZE IN IOS NAVBAR
+    final PreferredSizeWidget appBar = (Platform.isIOS
+        ? CupertinoNavigationBar(
+            middle: const Text('Flutter Personal Expense'),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                GestureDetector(
+                    onTap: () => _startButtonAddTransaction(context),
+                    child: Icon(CupertinoIcons.add)),
+              ],
+            ),
+          )
+        : AppBar(
+            title: const Text('Flutter Personal Expense'),
+            actions: <Widget>[
+              IconButton(
+                  onPressed: () => _startButtonAddTransaction(context),
+                  icon: Icon(Icons.add))
+            ],
+          )) as PreferredSizeWidget;
 
     final transactionListWidget = Container(
         height: (mediaQuery.size.height -
@@ -133,54 +148,69 @@ class _MyHomePageState extends State<MyHomePage> {
             0.7,
         child: TransactionList(_userTransactions, _deleteTransaction));
 
-    // ! YANG INI BUTUH PEMAHAMAN WIDGET
-    return Scaffold(
-        appBar: appBar,
-        // ! BUAT SCROLL KARNA PAS NGEADD LIST DAN KEYBOARD MUNCUL ADA ERROR
-        body: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              // Card will take width child, but if the parents had width it will take the parent,
-              // Column is not the parent, usually is Container so it is no problem to put Container in Card or outside Card as Parent
-              // ! GET HEIGHT DEPENDS ON DEVICES
-              if (_isLandscape)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text('Show Chart'),
-                    Switch(
-                        value: _showChart,
-                        onChanged: (val) {
-                          setState(() {
-                            _showChart = val;
-                          });
-                        })
-                  ],
+    final pageBody = SafeArea(
+        child: SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // Card will take width child, but if the parents had width it will take the parent,
+          // Column is not the parent, usually is Container so it is no problem to put Container in Card or outside Card as Parent
+          // ! GET HEIGHT DEPENDS ON DEVICES
+          if (_isLandscape)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Show Chart',
+                  style: Theme.of(context).textTheme.headline6,
                 ),
-              if (!_isLandscape)
-                Container(
-                    height: (mediaQuery.size.height -
-                            appBar.preferredSize.height -
-                            mediaQuery.padding.top) *
-                        0.3,
-                    child: Chart(_recentTransaction)),
-              if (!_isLandscape) transactionListWidget,
-              _showChart
-                  ? Container(
-                      height: (mediaQuery.size.height -
-                              appBar.preferredSize.height -
-                              mediaQuery.padding.top) *
-                          0.7,
-                      child: Chart(_recentTransaction))
-                  : transactionListWidget
-            ],
-          ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: FloatingActionButton(
-            child: Icon(Icons.add),
-            onPressed: () => _startButtonAddTransaction(context)));
+                Switch.adaptive(
+                    activeColor: Theme.of(context).primaryColor,
+                    value: _showChart,
+                    onChanged: (val) {
+                      setState(() {
+                        _showChart = val;
+                      });
+                    })
+              ],
+            ),
+          if (!_isLandscape)
+            Container(
+                height: (mediaQuery.size.height -
+                        appBar.preferredSize.height -
+                        mediaQuery.padding.top) *
+                    0.3,
+                child: Chart(_recentTransaction)),
+          if (!_isLandscape) transactionListWidget,
+          _showChart
+              ? Container(
+                  height: (mediaQuery.size.height -
+                          appBar.preferredSize.height -
+                          mediaQuery.padding.top) *
+                      0.7,
+                  child: Chart(_recentTransaction))
+              : transactionListWidget
+        ],
+      ),
+    ));
+
+    // ! YANG INI BUTUH PEMAHAMAN WIDGET
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            child: pageBody,
+            navigationBar: (appBar as ObstructingPreferredSizeWidget),
+          )
+        : Scaffold(
+            appBar: appBar,
+            // ! BUAT SCROLL KARNA PAS NGEADD LIST DAN KEYBOARD MUNCUL ADA ERROR
+            body: pageBody,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: Platform.isIOS
+                ? Container()
+                : FloatingActionButton(
+                    child: Icon(Icons.add),
+                    onPressed: () => _startButtonAddTransaction(context)));
   }
 }

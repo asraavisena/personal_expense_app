@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../widgets/adaptive_flat_button.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function addTransactionFunction;
@@ -88,12 +89,7 @@ class _NewTransactionState extends State<NewTransaction> {
                                   .format(_selectedDate as DateTime),
                     ),
                   ),
-                  TextButton(
-                    onPressed: _showDatePicker,
-                    child: Text('Choose Date'),
-                    style: TextButton.styleFrom(
-                        textStyle: TextStyle(fontWeight: FontWeight.bold)),
-                  )
+                  AdaptiveButton('Choose Date', _showDatePicker)
                 ],
               ),
             ),
