@@ -31,8 +31,8 @@ class MyApp extends StatelessWidget {
               .copyWith(secondary: Colors.pink[400]),
           fontFamily: 'QuickSand',
           textTheme: ThemeData.light().textTheme.copyWith(
-              headline6: TextStyle(fontFamily: 'OpenSans', fontSize: 20),
-              button: TextStyle(color: Colors.white)),
+              headline6: const TextStyle(fontFamily: 'OpenSans', fontSize: 20),
+              button: const TextStyle(color: Colors.white)),
           textButtonTheme: TextButtonThemeData(
             style: TextButton.styleFrom(
               primary: Colors.purple,
@@ -71,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Transaction> get _recentTransaction {
     return _userTransactions.where((tx) {
       return tx.date.isAfter(DateTime.now().subtract(
-        Duration(days: 7),
+        const Duration(days: 7),
       ));
     }).toList();
   }
@@ -113,6 +113,50 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  List<Widget> _buildLandscapeContent(
+      MediaQueryData mediaQuery, AppBar appBar, Widget transactionListWidget) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            'Show Chart',
+            style: Theme.of(context).textTheme.headline6,
+          ),
+          Switch.adaptive(
+              activeColor: Theme.of(context).primaryColor,
+              value: _showChart,
+              onChanged: (val) {
+                setState(() {
+                  _showChart = val;
+                });
+              })
+        ],
+      ),
+      _showChart
+          ? Container(
+              height: (mediaQuery.size.height -
+                      appBar.preferredSize.height -
+                      mediaQuery.padding.top) *
+                  0.7,
+              child: Chart(_recentTransaction))
+          : transactionListWidget
+    ];
+  }
+
+  List<Widget> _buildPortraitContent(
+      MediaQueryData mediaQuery, AppBar appBar, Widget transactionListWidget) {
+    return [
+      Container(
+          height: (mediaQuery.size.height -
+                  appBar.preferredSize.height -
+                  mediaQuery.padding.top) *
+              0.3,
+          child: Chart(_recentTransaction)),
+      transactionListWidget
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     // ! CHECK IS LANDSCAPE OR NOT
@@ -128,7 +172,7 @@ class _MyHomePageState extends State<MyHomePage> {
               children: <Widget>[
                 GestureDetector(
                     onTap: () => _startButtonAddTransaction(context),
-                    child: Icon(CupertinoIcons.add)),
+                    child: const Icon(CupertinoIcons.add)),
               ],
             ),
           )
@@ -137,7 +181,7 @@ class _MyHomePageState extends State<MyHomePage> {
             actions: <Widget>[
               IconButton(
                   onPressed: () => _startButtonAddTransaction(context),
-                  icon: Icon(Icons.add))
+                  icon: const Icon(Icons.add))
             ],
           )) as PreferredSizeWidget;
 
@@ -158,39 +202,11 @@ class _MyHomePageState extends State<MyHomePage> {
           // Column is not the parent, usually is Container so it is no problem to put Container in Card or outside Card as Parent
           // ! GET HEIGHT DEPENDS ON DEVICES
           if (_isLandscape)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  'Show Chart',
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-                Switch.adaptive(
-                    activeColor: Theme.of(context).primaryColor,
-                    value: _showChart,
-                    onChanged: (val) {
-                      setState(() {
-                        _showChart = val;
-                      });
-                    })
-              ],
-            ),
+            ..._buildLandscapeContent(
+                mediaQuery, (appBar as AppBar), transactionListWidget),
           if (!_isLandscape)
-            Container(
-                height: (mediaQuery.size.height -
-                        appBar.preferredSize.height -
-                        mediaQuery.padding.top) *
-                    0.3,
-                child: Chart(_recentTransaction)),
-          if (!_isLandscape) transactionListWidget,
-          _showChart
-              ? Container(
-                  height: (mediaQuery.size.height -
-                          appBar.preferredSize.height -
-                          mediaQuery.padding.top) *
-                      0.7,
-                  child: Chart(_recentTransaction))
-              : transactionListWidget
+            ..._buildPortraitContent(
+                mediaQuery, (appBar as AppBar), transactionListWidget),
         ],
       ),
     ));
@@ -210,7 +226,7 @@ class _MyHomePageState extends State<MyHomePage> {
             floatingActionButton: Platform.isIOS
                 ? Container()
                 : FloatingActionButton(
-                    child: Icon(Icons.add),
+                    child: const Icon(Icons.add),
                     onPressed: () => _startButtonAddTransaction(context)));
   }
 }

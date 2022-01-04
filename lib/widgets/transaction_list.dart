@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:intl/intl.dart';
+// import 'package:flutter/rendering.dart';
+import './transaction_item.dart';
 import '../models/transaction.dart';
 
 class TransactionList extends StatelessWidget {
@@ -21,7 +21,7 @@ class TransactionList extends StatelessWidget {
                   'No Transaction added yet!',
                   style: Theme.of(context).textTheme.headline6,
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 Container(
@@ -35,42 +35,12 @@ class TransactionList extends StatelessWidget {
           })
         // ! LISTVIEW BUAT SCROLL TP VIEW ALWAYS HAVE INFINITE HEIGHT
         : ListView.builder(
+            //! KAYA FOREACH / MAP NYA
             itemBuilder: (ctx, index) {
               // return a widget
-              return Card(
-                elevation: 5,
-                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    radius: 30,
-                    child: Padding(
-                      padding: EdgeInsets.all(7),
-                      child: FittedBox(
-                          child: Text('\$ ${transactions[index].amount}')),
-                    ),
-                  ),
-                  title: Text(
-                    transactions[index].title,
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                  subtitle:
-                      Text(DateFormat.yMMMd().format(transactions[index].date)),
-                  trailing: MediaQuery.of(context).size.width > 460
-                      ? TextButton.icon(
-                          onPressed: () =>
-                              _deleteTransaction(transactions[index].id),
-                          icon: Icon(Icons.delete),
-                          label: Text('Delete'),
-                          style: TextButton.styleFrom(primary: Colors.red),
-                        )
-                      : IconButton(
-                          icon: Icon(Icons.delete),
-                          onPressed: () =>
-                              _deleteTransaction(transactions[index].id),
-                          color: Theme.of(context).errorColor,
-                        ),
-                ),
-              );
+              return TransactionItem(
+                  transaction: transactions[index],
+                  deleteTransaction: _deleteTransaction);
               // ! ANOTHER VERSION WITHOUT LISTTILE
               // Card(
               //     child: Row(

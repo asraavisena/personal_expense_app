@@ -17,6 +17,12 @@ class _NewTransactionState extends State<NewTransaction> {
   DateTime? _selectedDate; // ! NULL EXCEPTION
 
   @override
+  void initState() {
+    // ! FOR USE HTTP REQUEST LOAD DATA FROM SERVER OR DB
+    super.initState();
+  }
+
+  @override
   void _addTransactionPressed() {
     if (_amountController.text.isEmpty) {
       return;
@@ -65,12 +71,12 @@ class _NewTransactionState extends State<NewTransaction> {
             // Receiving user input
             TextField(
               controller: _titleController,
-              decoration: InputDecoration(labelText: 'Title'),
+              decoration: const InputDecoration(labelText: 'Title'),
               onSubmitted: (_) => _addTransactionPressed(),
             ),
             TextField(
               controller: _amountController,
-              decoration: InputDecoration(labelText: 'Amount'),
+              decoration: const InputDecoration(labelText: 'Amount'),
               keyboardType: TextInputType.number,
               // mean (_) it is convention signal, i get an argument but dont care about it
               // also mean I DONT USE IT
@@ -95,7 +101,7 @@ class _NewTransactionState extends State<NewTransaction> {
             ),
             ElevatedButton(
               onPressed: _addTransactionPressed,
-              child: Text('Add Transaction'),
+              child: const Text('Add Transaction'),
             )
           ],
         ),
