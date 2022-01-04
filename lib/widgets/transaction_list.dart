@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 import '../models/transaction.dart';
 
@@ -12,23 +13,26 @@ class TransactionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return transactions.isEmpty
-        ? Column(
-            children: <Widget>[
-              Text(
-                'No Transaction added yet!',
-                style: Theme.of(context).textTheme.headline6,
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Container(
-                  height: 200,
-                  child: Image.asset(
-                    'assets/images/waiting.png',
-                    fit: BoxFit.cover,
-                  ))
-            ],
-          )
+        // ! SETUP IMAGE FOR LANDSCAPE MODE
+        ? LayoutBuilder(builder: (ctx, constrains) {
+            return Column(
+              children: <Widget>[
+                Text(
+                  'No Transaction added yet!',
+                  style: Theme.of(context).textTheme.headline6,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                    height: constrains.maxHeight * 0.6,
+                    child: Image.asset(
+                      'assets/images/waiting.png',
+                      fit: BoxFit.cover,
+                    ))
+              ],
+            );
+          })
         // ! LISTVIEW BUAT SCROLL TP VIEW ALWAYS HAVE INFINITE HEIGHT
         : ListView.builder(
             itemBuilder: (ctx, index) {
@@ -51,11 +55,20 @@ class TransactionList extends StatelessWidget {
                   ),
                   subtitle:
                       Text(DateFormat.yMMMd().format(transactions[index].date)),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () => _deleteTransaction(transactions[index].id),
-                    color: Theme.of(context).errorColor,
-                  ),
+                  trailing: MediaQuery.of(context).size.width > 460
+                      ? TextButton.icon(
+                          onPressed: () =>
+                              _deleteTransaction(transactions[index].id),
+                          icon: Icon(Icons.delete),
+                          label: Text('Delete'),
+                          style: TextButton.styleFrom(primary: Colors.red),
+                        )
+                      : IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () =>
+                              _deleteTransaction(transactions[index].id),
+                          color: Theme.of(context).errorColor,
+                        ),
                 ),
               );
               // ! ANOTHER VERSION WITHOUT LISTTILE

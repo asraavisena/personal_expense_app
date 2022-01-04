@@ -50,52 +50,60 @@ class _NewTransactionState extends State<NewTransaction> {
   }
 
   Widget build(BuildContext context) {
-    return Card(
-        child: Container(
-      padding: EdgeInsets.all(10),
-      child: Column(
-        children: <Widget>[
-          // Receiving user input
-          TextField(
-            controller: _titleController,
-            decoration: InputDecoration(labelText: 'Title'),
-            onSubmitted: (_) => _addTransactionPressed(),
-          ),
-          TextField(
-            controller: _amountController,
-            decoration: InputDecoration(labelText: 'Amount'),
-            keyboardType: TextInputType.number,
-            // mean (_) it is convention signal, i get an argument but dont care about it
-            // also mean I DONT USE IT
-            onSubmitted: (_) => _addTransactionPressed(),
-          ),
-          Container(
-            height: 70,
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Text(
-                    _selectedDate == null
-                        ? 'No Date Choose'
-                        : 'Picked date: ' +
-                            DateFormat.yMd().format(_selectedDate as DateTime),
-                  ),
-                ),
-                TextButton(
-                  onPressed: _showDatePicker,
-                  child: Text('Choose Date'),
-                  style: TextButton.styleFrom(
-                      textStyle: TextStyle(fontWeight: FontWeight.bold)),
-                )
-              ],
+    return SingleChildScrollView(
+      child: Card(
+          child: Container(
+        padding: EdgeInsets.only(
+            top: 10,
+            left: 10,
+            right: 10,
+            bottom: MediaQuery.of(context).viewInsets.bottom +
+                10), // ! MOVE UP ENTIRE INPUT AREA BECAUSE OF KEYBOARD
+        child: Column(
+          children: <Widget>[
+            // Receiving user input
+            TextField(
+              controller: _titleController,
+              decoration: InputDecoration(labelText: 'Title'),
+              onSubmitted: (_) => _addTransactionPressed(),
             ),
-          ),
-          ElevatedButton(
-            onPressed: _addTransactionPressed,
-            child: Text('Add Transaction'),
-          )
-        ],
-      ),
-    ));
+            TextField(
+              controller: _amountController,
+              decoration: InputDecoration(labelText: 'Amount'),
+              keyboardType: TextInputType.number,
+              // mean (_) it is convention signal, i get an argument but dont care about it
+              // also mean I DONT USE IT
+              onSubmitted: (_) => _addTransactionPressed(),
+            ),
+            Container(
+              height: 70,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Text(
+                      _selectedDate == null
+                          ? 'No Date Choose'
+                          : 'Picked date: ' +
+                              DateFormat.yMd()
+                                  .format(_selectedDate as DateTime),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: _showDatePicker,
+                    child: Text('Choose Date'),
+                    style: TextButton.styleFrom(
+                        textStyle: TextStyle(fontWeight: FontWeight.bold)),
+                  )
+                ],
+              ),
+            ),
+            ElevatedButton(
+              onPressed: _addTransactionPressed,
+              child: Text('Add Transaction'),
+            )
+          ],
+        ),
+      )),
+    );
   }
 }

@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // ! FOR SYSTEM CHROME
 import './widgets/chart.dart';
 import './widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
 import './models/transaction.dart';
 
 void main() {
+  // ! TO AVOID LANDSCAPE MODE -> IT MEANS NO LANDSCAPE MODE
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations(
+  //     [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(const MyApp());
 }
 
@@ -26,6 +31,11 @@ class MyApp extends StatelessWidget {
           textTheme: ThemeData.light().textTheme.copyWith(
               headline6: TextStyle(fontFamily: 'OpenSans', fontSize: 20),
               button: TextStyle(color: Colors.white)),
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              primary: Colors.purple,
+            ),
+          ),
           elevatedButtonTheme: ElevatedButtonThemeData(
               style: ElevatedButton.styleFrom(onPrimary: Colors.white))
           // appBarTheme: AppBarTheme(
@@ -64,6 +74,8 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
+  bool _showChart = false;
+
   void _addTransaction(String title, double amount, DateTime choosenDate) {
     final newTransaction = Transaction(
         title: title,
@@ -101,6 +113,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // ! CHECK IS LANDSCAPE OR NOT
+    final mediaQuery = MediaQuery.of(context);
+    final _isLandscape = mediaQuery.orientation == Orientation.landscape;
     // ! SETUP APPBAR
     final appBar = AppBar(
       title: const Text('Flutter Personal Expense'),
@@ -110,6 +125,13 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: Icon(Icons.add))
       ],
     );
+
+    final transactionListWidget = Container(
+        height: (mediaQuery.size.height -
+                appBar.preferredSize.height -
+                mediaQuery.padding.top) *
+            0.7,
+        child: TransactionList(_userTransactions, _deleteTransaction));
 
     // ! YANG INI BUTUH PEMAHAMAN WIDGET
     return Scaffold(
@@ -123,20 +145,36 @@ class _MyHomePageState extends State<MyHomePage> {
               // Card will take width child, but if the parents had width it will take the parent,
               // Column is not the parent, usually is Container so it is no problem to put Container in Card or outside Card as Parent
               // ! GET HEIGHT DEPENDS ON DEVICES
-
-              Container(
-                  height: (MediaQuery.of(context).size.height -
-                          appBar.preferredSize.height -
-                          MediaQuery.of(context).padding.top) *
-                      0.3,
-                  child: Chart(_recentTransaction)),
-              Container(
-                  height: (MediaQuery.of(context).size.height -
-                          appBar.preferredSize.height -
-                          MediaQuery.of(context).padding.top) *
-                      0.7,
-                  child:
-                      TransactionList(_userTransactions, _deleteTransaction)),
+              if (_isLandscape)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('Show Chart'),
+                    Switch(
+                        value: _showChart,
+                        onChanged: (val) {
+                          setState(() {
+                            _showChart = val;
+                          });
+                        })
+                  ],
+                ),
+              if (!_isLandscape)
+                Container(
+                    height: (mediaQuery.size.height -
+                            appBar.preferredSize.height -
+                            mediaQuery.padding.top) *
+                        0.3,
+                    child: Chart(_recentTransaction)),
+              if (!_isLandscape) transactionListWidget,
+              _showChart
+                  ? Container(
+                      height: (mediaQuery.size.height -
+                              appBar.preferredSize.height -
+                              mediaQuery.padding.top) *
+                          0.7,
+                      child: Chart(_recentTransaction))
+                  : transactionListWidget
             ],
           ),
         ),
